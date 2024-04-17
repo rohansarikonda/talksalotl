@@ -1,11 +1,12 @@
 import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart';
 
+import 'package:flutter/foundation.dart';
+
+import '../keys.dart';
 class EvalScreen extends StatefulWidget {
   const EvalScreen({Key? key}) : super(key: key);
 
@@ -14,8 +15,8 @@ class EvalScreen extends StatefulWidget {
 }
 
 class _EvalScreenState extends State<EvalScreen> {
-  final String appKey = "17107534460002ad";
-  final String secretKey = "c81c037d1b348906bb2d26c41eb69271";
+  final String appKey = app; //from keys.dart (untracked, holds appKey and secretKey)
+  final String secretKey = secret;
   final String userId = "rsarikonda";
   final String baseHOST = "api.speechsuper.com";
 

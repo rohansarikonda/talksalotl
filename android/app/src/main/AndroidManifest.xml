@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="flutter_application_1"
+        android:label="Talksalotl"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="e@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:exported="true"
