@@ -51,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
             );
           },
           child: const Text(
-            'Tap anywhere to begin',
+            'Click here to begin!',
             style: TextStyle(fontSize: 24),
           ),
         ),
