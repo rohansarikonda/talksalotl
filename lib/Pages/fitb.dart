@@ -14,37 +14,8 @@ class FITB extends StatefulWidget {
 
 
 class _FITBState extends State<FITB> {
- FlutterSoundRecorder? _recorder = FlutterSoundRecorder();
- bool _isRecording = false;
- final String _recordedFilePath = '';
  String _selectedOption = ''; // State variable to track the selected option
 
- @override
- void initState() {
-    super.initState();
-    _recorder!.openRecorder().then((value) => setState(() {}));
- }
-
- @override
- void dispose() {
-    _recorder!.closeRecorder();
-    _recorder = null;
-    super.dispose();
- }
-
- Future<void> _startRecording() async {
-    await _recorder!.startRecorder(toFile: _recordedFilePath);
-    setState(() {
-      _isRecording = true;
-    });
- }
-
- Future<void> _stopRecording() async {
-    await _recorder!.stopRecorder();
-    setState(() {
-      _isRecording = false;
-    });
- }
 
  @override
  Widget build(BuildContext context) {
@@ -72,11 +43,7 @@ class _FITBState extends State<FITB> {
             // Rest of the code remains unchanged
           ],
         ),
-      ),floatingActionButton: FloatingActionButton(
-      onPressed: _isRecording ? _stopRecording : _startRecording,
-      backgroundColor: Colors.blue,
-      child: Icon(_isRecording ? Icons.stop : Icons.mic),
-    ),
+      ),
     );
  }
 

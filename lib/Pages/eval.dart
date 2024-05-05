@@ -6,6 +6,7 @@ import 'package:crypto/crypto.dart';
 import '../keys.dart';
 import 'dart:io';
 import 'dart:math';
+
 //all above imports are for the api calls
 
 import '../navigation_service.dart';
@@ -16,6 +17,7 @@ import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 //all above packages are for the audio recording
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../navigation_service.dart';
 
 class EvalScreen extends StatefulWidget {
   const EvalScreen({Key? key}) : super(key: key);
@@ -36,6 +38,13 @@ class _EvalScreenState extends State<EvalScreen> {
   final audioPath = "../assets/supermarket.wav"; // Change the audio path corresponding to the reference text.
   final audioType = "wav"; // Change the audio type corresponding to the audio file.
   final audioSampleRate = "16000";
+
+
+  void getApplicationDocumentsDirectoryPath() async {
+  final directory = await getApplicationDocumentsDirectory();
+  print('Application Path Right Here: ${directory.path}');
+  }
+
 
   FlutterSoundRecorder? _recorder = FlutterSoundRecorder();
   bool _isRecording = false;
@@ -83,6 +92,7 @@ class _EvalScreenState extends State<EvalScreen> {
   void initState() {
     super.initState();
     requestMicrophonePermission();
+    getApplicationDocumentsDirectoryPath();
     _recorder!.openRecorder().then((value) => setState(() {}));
   }
 
@@ -296,39 +306,6 @@ class _EvalScreenState extends State<EvalScreen> {
     });
   }
 }
-
-class WordEvaluationPage extends StatelessWidget {
-  Future<String> _loadRandomWord() async {
-    String jsonString = await rootBundle.loadString('../assets/common.json');
-    Map map = jsonDecode(jsonString);
-    List<String> words = map["commonWords"].cast<String>();
-    
-    return words[Random().nextInt(words.length)];
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Word Evaluation'),
-      ),
-      body: FutureBuilder<String>(
-        future: _loadRandomWord(),
-        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: Text('Loading...'));
-          } else {
-            if (snapshot.hasError)
-              return Center(child: Text('Error: ${snapshot.error}'));
-            else
-              return Center(child: Text('The word you need to say is: ${snapshot.data}'));
-          }
-        },
-      ),
-    );
-  }
-}
-
 class SentenceEvaluationPage extends StatelessWidget {
   const SentenceEvaluationPage({super.key});
 
@@ -340,6 +317,152 @@ class SentenceEvaluationPage extends StatelessWidget {
       ),
       body: const Center(
         child: Text('Sentence Evaluation Page'),
+      ),
+    );
+  }
+}
+
+class WordEvaluationPage extends StatefulWidget {
+  const WordEvaluationPage({Key? key}) : super(key: key);
+
+  @override
+  _WordEvaluationPageState createState() => _WordEvaluationPageState();
+}
+
+class _WordEvaluationPageState extends State<WordEvaluationPage> {
+  FlutterSoundRecorder? _recorder = FlutterSoundRecorder();
+  bool _isRecording = false;
+  late String _recordedFilePath;
+
+
+  Future<void> storeValue(String key, String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(key, value);
+  }
+
+  Future<String?> retrieveValue(String key) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key);
+  }
+
+  Future<void> requestMicrophonePermission() async {
+    final microphoneStatus = await Permission.microphone.status;
+    if (!(microphoneStatus.isGranted)) {
+      await Permission.microphone.request();
+    }
+  }
+
+  Future<void> requestStoragePermissions() async {
+    final storageStatus = await Permission.storage.status;
+    if (!(storageStatus.isGranted)) {
+      await Permission.storage.request();
+    }
+  }
+
+  Future<void> requestAudioPermissions() async {
+    final storageStatus = await Permission.audio.status;
+    if (!(storageStatus.isGranted)) {
+      await Permission.audio.request();
+    }
+  }
+
+  /*Future<void> requestExternalStoragePermissions() async {
+    final status = await Permission.manageExternalStorage.status;
+    if (!(status.isGranted)) {
+      await Permission.manageExternalStorage.request();
+    }
+  }*/ //this permission is for using external storage like MicroSDs
+
+
+
+  Future<String?> getSavePath() async {
+    Directory? directory = Directory('/storage/emulated/0/Download');
+    if (!(await directory.exists())) {
+      directory =
+          await getDownloadsDirectory(); // Handle case where external storage unavailable
+    }
+
+    final filename = await showDialog(
+      context: NavigationService
+          .navigatorKey.currentContext!, 
+      builder: (context) => const SaveFileDialog(),
+    );
+    String? finalPath =
+        filename != null ? '${directory!.path}/$filename.mp4' : null;
+    //print(finalPath);
+    return finalPath;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    requestMicrophonePermission();
+    _recorder!.openRecorder().then((value) => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _recorder!.closeRecorder();
+    _recorder = null;
+    super.dispose();
+  }
+
+  Future<void> _startRecording() async {
+    _recordedFilePath = await getSavePath() ?? '';
+    print(_recordedFilePath);
+    await _recorder!.startRecorder(toFile: _recordedFilePath);
+    setState(() {
+      _isRecording = true;
+    });
+  }
+
+  Future<void> _stopRecording() async {
+    await _recorder!.stopRecorder();
+    setState(() {
+      _isRecording = false;
+    });
+  }
+
+  Future<String> _loadRandomWord() async {
+
+    Directory current = Directory.current;
+    String dir = current.path;
+    print(dir);
+    String jsonString = await rootBundle.loadString('./assets/common.json');
+    Map map = await jsonDecode(jsonString);
+    List<String> words = await map["commonWords"].cast<String>();
+    
+    return words[Random().nextInt(words.length)];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Word Evaluation'),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          FutureBuilder<String>(
+            future: _loadRandomWord(),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting)
+                return const Center(child: CircularProgressIndicator());
+              else {
+                if (snapshot.hasError)
+                  return Center(child: Text('Error: ${snapshot.error} \n Stack: ${snapshot.stackTrace}'));
+                else
+                  return Center(child: Text('The word you need to say is: ${snapshot.data}'));
+              }
+            },
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _isRecording ? _stopRecording : _startRecording,
+        backgroundColor: Colors.blue,
+        child: Icon(_isRecording ? Icons.stop : Icons.mic),
       ),
     );
   }
