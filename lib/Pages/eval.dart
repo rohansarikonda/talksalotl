@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
@@ -8,11 +10,8 @@ import 'dart:io';
 import 'dart:math';
 
 //all above imports are for the api calls
-
-import '../navigation_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../Components/save_file.dart';
 import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 //all above packages are for the audio recording
 import 'package:shared_preferences/shared_preferences.dart'; //for high score storage
@@ -98,7 +97,7 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
   bool _isRecording = false;
   late String _recordedFilePath;
   late String _currentWord;
-  TextEditingController resultController = new TextEditingController();
+  TextEditingController resultController = TextEditingController();
 
   final String appKey = app; //from keys.dart (untracked, holds appKey and secretKey)
   final String secretKey = secret;
@@ -166,8 +165,9 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
   //AUDIO RECORDING
   Future<String?> getSavePath() async {
   Directory? directory = await getApplicationDocumentsDirectory();
-  print("INITIAL DIRECTORY: " + directory.path);
+  print("INITIAL DIRECTORY: ${directory.path}");
   if (directory != null) {
+    /*
     final filename = await showDialog(
       context: NavigationService.navigatorKey.currentContext?? context,
       builder: (context) => const SaveFileDialog(),
@@ -183,6 +183,12 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
       print("Error: File name not provided.");
       return null;
     }
+    */
+    setState(() {
+        _recordedFilePath = '${directory.path}/temp.aac';
+      });
+      print("Current File Path: ${directory.path}/temp.aac");
+      return '${directory.path}/temp.aac';
   } else {
     print("Error: Documents directory not available.");
     return null;
@@ -327,24 +333,22 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
     final bytes = await file.readAsBytes();
 
     //use bytes directly in the request
-
-    
-    var url = Uri.https(baseHOST, wordCore);
-    var request = http.MultipartRequest("POST", url)
+    var url = Uri.https(baseHOST, wordCore); //create the url
+    var request = http.MultipartRequest("POST", url) //make http request
     ..fields["text"] = jsonEncode(params)
-    ..files.add(http.MultipartFile.fromBytes("audio", bytes))
+    ..files.add(http.MultipartFile.fromBytes("audio", bytes)) //pass bytes from the audio file
     ..headers["Request-Index"] = "0";
 
-      var response = await request.send();
+      var response = await request.send(); //get the response back
       if(response.statusCode != 200) {
         resultController.text = "HTTP status code ${response.statusCode}";
       } else {
          response.stream.transform(utf8.decoder).join().then((String str) {
            if(str.contains("error")) {
-             resultController.text = str;
+             resultController.text = str; //handle errors
            } else {
              var respJson = jsonDecode(str);
-             resultController.text = "overall: ${respJson["result"]["overall"]}";
+             resultController.text = "${respJson["result"]["overall"]}"; //make the text in resultController the score
            }
          });
       }
@@ -359,42 +363,48 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
     title: const Text('Word Evaluation'),
   ),
   body: Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: <Widget>[
-      Column(
-        children: <Widget>[
-          const Text('The word you need to say is:'),
-          Text(
-            '$_currentWord',
-            style: TextStyle(
-              fontSize: 30.0, // This makes the text bigger
-              fontWeight: FontWeight.bold, // This makes the text bold
-            ),
-            textAlign: TextAlign.center, // This centers the text
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: <Widget>[
+    Column(
+      children: <Widget>[
+        const Text(
+          'The word you need to say is:',
+          style: TextStyle(
+            fontSize: 30.0,
           ),
-        ],
-      ),
-      TextField(
+          ),
+        Text(
+          _currentWord,
+          style: const TextStyle(
+            fontSize: 50.0,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    ),
+    Expanded(
+      child: TextField(
         keyboardType: TextInputType.multiline,
         maxLength: null,
         minLines: 6,
-        maxLines: 22,
+        maxLines: null,
         readOnly: true,
         controller: resultController,
-        decoration: const InputDecoration(hintText: "Result:", contentPadding: const EdgeInsets.symmetric(vertical: 20.0),),
         style: const TextStyle(
-          fontSize: 50.0, // text size
-          fontWeight: FontWeight.bold, // bold text
-          color: Color(0xFF8eb8e5), // custom color
+          fontSize: 80.0,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF8eb8e5),
         ),
-        textAlign: TextAlign.center, //center the result
+        textAlign: TextAlign.center,
       ),
-      ElevatedButton(
-        onPressed: doWordEval,
-        child: const Text('Press After Recording'),
-        ),
-    ],
-  ),
+    ),
+    ElevatedButton(
+      onPressed: doWordEval,
+      child: const Text('Press After Recording'),
+    ),
+  ],
+),
   floatingActionButton: FloatingActionButton(
     onPressed: _isRecording ? _stopRecording : _startRecording,
     backgroundColor: Colors.blue,
