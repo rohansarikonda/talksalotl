@@ -15,9 +15,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../Components/save_file.dart';
 import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 //all above packages are for the audio recording
-import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../navigation_service.dart';
+import 'package:shared_preferences/shared_preferences.dart'; //for high score storage
 
 class EvalScreen extends StatefulWidget {
   const EvalScreen({Key? key}) : super(key: key);
@@ -112,6 +110,7 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
   final audioType = "mp3"; // Change the audio type corresponding to the audio file.
   final audioSampleRate = "16000";
 
+  //SCORE STORAGE AND RETRIEVAL
 
   Future<void> storeValue(String key, String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -123,11 +122,14 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
     return prefs.getString(key);
   }
 
+  //REQUEST PERMISSIONS
+
   Future<void> requestMicrophonePermission() async {
     final microphoneStatus = await Permission.microphone.status;
     if (!(microphoneStatus.isGranted)) {
       await Permission.microphone.request();
     }
+    print("MICROPHONE:" + microphoneStatus.toString());
   }
 
   Future<void> requestStoragePermissions() async {
@@ -135,13 +137,23 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
     if (!(storageStatus.isGranted)) {
       await Permission.storage.request();
     }
+
+    print("STORAGE:" + storageStatus.toString());
   }
 
   Future<void> requestAudioPermissions() async {
-    final storageStatus = await Permission.audio.status;
-    if (!(storageStatus.isGranted)) {
+    final audioStatus = await Permission.audio.status;
+    if (!(audioStatus.isGranted)) {
       await Permission.audio.request();
     }
+
+    print("AUDIO: " + audioStatus.toString());
+  }
+
+  Future<void> requestAllPermissions() async {
+    requestAudioPermissions();
+    requestMicrophonePermission();
+    requestStoragePermissions();
   }
 
   /*Future<void> requestExternalStoragePermissions() async {
@@ -149,10 +161,12 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
     if (!(status.isGranted)) {
       await Permission.manageExternalStorage.request();
     }
-  }*/ //this permission is for using external storage like MicroSDs
+  }*/ //this permission is for using external storage like SD cards
 
+  //AUDIO RECORDING
   Future<String?> getSavePath() async {
   Directory? directory = await getApplicationDocumentsDirectory();
+  print("INITIAL DIRECTORY: " + directory.path);
   if (directory != null) {
     final filename = await showDialog(
       context: NavigationService.navigatorKey.currentContext?? context,
@@ -161,10 +175,10 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
 
     if (filename != null) {
       setState(() {
-        _recordedFilePath = '${directory.path}/$filename.mp3';
+        _recordedFilePath = '${directory.path}/$filename.aac';
       });
-      print("Current File Path: ${directory.path}/$filename.mp3");
-      return '${directory.path}/$filename.mp3';
+      print("Current File Path: ${directory.path}/$filename.aac");
+      return '${directory.path}/$filename.aac';
     } else {
       print("Error: File name not provided.");
       return null;
@@ -178,7 +192,7 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
   @override
   void initState() {
     super.initState();
-    requestMicrophonePermission();
+    requestAllPermissions();
     _loadRandomWord().then((word) {
       setState(() {
         _currentWord = word;
@@ -195,37 +209,51 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
   }
 
   Future<void> _startRecording() async {
-    _recordedFilePath = await getSavePath() ?? '';
-    print("PATH RIGHT HERE:" + _recordedFilePath);
-    await _recorder!.startRecorder(toFile: _recordedFilePath);
-    setState(() {
-      _isRecording = true;
-    });
+  String filePath = await getSavePath() ?? 'placeholder';
+  if (filePath.isEmpty) {
+    print("Error: No path retrieved from getSavePath");
+    return;
   }
+  print("CURRENT FILE PATH:" + filePath);
+  setState(() { 
+    _isRecording = true;
+    _recordedFilePath = filePath;  // Set path directly
+  });
+  print("RECORDED FILE PATH: $_recordedFilePath");
+  
+  try {
+    await _recorder!.startRecorder(toFile: filePath);
+  } catch (e) {
+    print("Error starting recorder: $e");
+  }
+}
 
   Future<void> _stopRecording() async {
-    // Stop the recording and get the file path
-    String filePath = await _recorder!.stopRecorder() as String;
+    setState(() {
+      _isRecording = false;
+    });
 
+    try {
+      await _recorder!.stopRecorder();
+    } catch (e) {
+      print("Error Closing Recorder: $e");
+    }
     // Check if the file exists
-    final fileExists = await File(filePath).exists();
+    final fileExists = await File(_recordedFilePath).exists();
     if (!fileExists) {
-      print('Error: File does not exist at path: $filePath');
+      print('Error: File does not exist at path: $_recordedFilePath');
       return;
     }
 
     // Check if the file is empty
-    final fileSize = await File(filePath).length();
+    final fileSize = await File(_recordedFilePath).length();
     if (fileSize == 0) {
-      print('Error: File is empty at path: $filePath');
+      print('Error: File is empty at path: $_recordedFilePath');
       return;
     }
-    
-    setState(() {
-      _isRecording = false;
-    });
   }
 
+  //WORD FOR AUDIO
   Future<String> _loadRandomWord() async {
 
     Directory current = Directory.current;
@@ -289,12 +317,23 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
       }
     };
 
-    rootBundle.load(_recordedFilePath).then((ByteData data) async {
-      var url = Uri.https(baseHOST, wordCore);
-      var request = http.MultipartRequest("POST", url)
-        ..fields["text"] = jsonEncode(params)
-        ..files.add(http.MultipartFile.fromBytes("audio", data.buffer.asUint8List()))
-        ..headers["Request-Index"] = "0";
+    final file = File(_recordedFilePath); //load the file from the filesystem
+    if (!await file.exists()) {
+      print("ERROR: THE FILE DOES NOT EXIST AT: $_recordedFilePath");
+      return;
+    }
+
+    //read the file's bytes
+    final bytes = await file.readAsBytes();
+
+    //use bytes directly in the request
+
+    
+    var url = Uri.https(baseHOST, wordCore);
+    var request = http.MultipartRequest("POST", url)
+    ..fields["text"] = jsonEncode(params)
+    ..files.add(http.MultipartFile.fromBytes("audio", bytes))
+    ..headers["Request-Index"] = "0";
 
       var response = await request.send();
       if(response.statusCode != 200) {
@@ -309,7 +348,6 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
            }
          });
       }
-    });
 
 
   }
@@ -317,33 +355,51 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Word Evaluation'),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+  appBar: AppBar(
+    title: const Text('Word Evaluation'),
+  ),
+  body: Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: <Widget>[
+      Column(
         children: <Widget>[
-          Center(child: Text('The word you need to say is: $_currentWord')),
-          TextField(
-                    keyboardType: TextInputType.multiline,
-                    maxLength: null,
-                    minLines: 6,
-                    maxLines: 22,
-                    readOnly: true,
-                    controller: resultController,
-                    decoration: const InputDecoration(hintText: "Result:", contentPadding: const EdgeInsets.symmetric(vertical: 20.0),),
-                  ),
-          ElevatedButton(
-            onPressed: doWordEval,
-            child: const Text('Press After Recording'),
+          const Text('The word you need to say is:'),
+          Text(
+            '$_currentWord',
+            style: TextStyle(
+              fontSize: 30.0, // This makes the text bigger
+              fontWeight: FontWeight.bold, // This makes the text bold
             ),
+            textAlign: TextAlign.center, // This centers the text
+          ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _isRecording ? _stopRecording : _startRecording,
-        backgroundColor: Colors.blue,
-        child: Icon(_isRecording ? Icons.stop : Icons.mic),
+      TextField(
+        keyboardType: TextInputType.multiline,
+        maxLength: null,
+        minLines: 6,
+        maxLines: 22,
+        readOnly: true,
+        controller: resultController,
+        decoration: const InputDecoration(hintText: "Result:", contentPadding: const EdgeInsets.symmetric(vertical: 20.0),),
+        style: const TextStyle(
+          fontSize: 50.0, // text size
+          fontWeight: FontWeight.bold, // bold text
+          color: Color(0xFF8eb8e5), // custom color
+        ),
+        textAlign: TextAlign.center, //center the result
       ),
-    );
+      ElevatedButton(
+        onPressed: doWordEval,
+        child: const Text('Press After Recording'),
+        ),
+    ],
+  ),
+  floatingActionButton: FloatingActionButton(
+    onPressed: _isRecording ? _stopRecording : _startRecording,
+    backgroundColor: Colors.blue,
+    child: Icon(_isRecording ? Icons.stop : Icons.mic),
+  ),
+);
   }
 }
