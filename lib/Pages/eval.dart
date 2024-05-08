@@ -27,96 +27,9 @@ class EvalScreen extends StatefulWidget {
 }
 
 class _EvalScreenState extends State<EvalScreen> {
-  final String appKey = app; //from keys.dart (untracked, holds appKey and secretKey)
-  final String secretKey = secret;
-  final String userId = "rsarikonda";
-  final String baseHOST = "api.speechsuper.com";
-
-  final String wordCore = "word.eval.promax"; // Change the coreType according to your needs.
-  final String sentCore = "sent.eval.promax";
-  final refText = "supermarket"; // Change the reference text according to your needs.
-  final audioPath = "../assets/supermarket.wav"; // Change the audio path corresponding to the reference text.
-  final audioType = "wav"; // Change the audio type corresponding to the audio file.
-  final audioSampleRate = "16000";
-
-
-  void getApplicationDocumentsDirectoryPath() async {
-  final directory = await getApplicationDocumentsDirectory();
-  print('Application Path Right Here: ${directory.path}');
-  }
-
-
-  FlutterSoundRecorder? _recorder = FlutterSoundRecorder();
-  bool _isRecording = false;
-  late String _recordedFilePath;
-  String _selectedOption = ''; // State variable to track the selected option
-
-  TextEditingController resultController = new TextEditingController();
-
-  Future<void> storeValue(String key, String value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(key, value);
-  }
-
-  Future<String?> retrieveValue(String key) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(key);
-  }
-
-  Future<void> requestMicrophonePermission() async {
-    final microphoneStatus = await Permission.microphone.status;
-    if (!(microphoneStatus.isGranted)) {
-      await Permission.microphone.request();
-    }
-  }
-
-  Future<String?> getSavePath() async {
-    Directory? directory = Directory('/storage/emulated/0/Download');
-    if (!(await directory.exists())) {
-      directory =
-          await getDownloadsDirectory(); // Handle case where external storage unavailable
-    }
-
-    final filename = await showDialog(
-      context: NavigationService
-          .navigatorKey.currentContext!, // Replace with your navigator key
-      builder: (context) => const SaveFileDialog(),
-    );
-    String? finalPath =
-        filename != null ? '${directory!.path}/$filename.mp4' : null;
-    print(finalPath);
-    return finalPath;
-  }
-
   @override
   void initState() {
     super.initState();
-    requestMicrophonePermission();
-    getApplicationDocumentsDirectoryPath();
-    _recorder!.openRecorder().then((value) => setState(() {}));
-  }
-
-  @override
-  void dispose() {
-    _recorder!.closeRecorder();
-    _recorder = null;
-    super.dispose();
-  }
-
-  Future<void> _startRecording() async {
-    _recordedFilePath = await getSavePath() ?? '';
-    print(_recordedFilePath);
-    await _recorder!.startRecorder(toFile: _recordedFilePath);
-    setState(() {
-      _isRecording = true;
-    });
-  }
-
-  Future<void> _stopRecording() async {
-    await _recorder!.stopRecorder();
-    setState(() {
-      _isRecording = false;
-    });
   }
 
   Widget build(BuildContext context) {
@@ -125,16 +38,6 @@ class _EvalScreenState extends State<EvalScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextField(
-                    keyboardType: TextInputType.multiline,
-                    maxLength: null,
-                    minLines: 6,
-                    maxLines: 22,
-                    readOnly: true,
-                    controller: resultController,
-                    decoration: const InputDecoration(hintText: "Result:", contentPadding: const EdgeInsets.symmetric(vertical: 20.0),),
-                  ),
-                   const SizedBox(height: 30.0,),
                   TextButton(
                     onPressed: () {
                       Navigator.push(
@@ -168,143 +71,6 @@ class _EvalScreenState extends State<EvalScreen> {
         )
     );
   }
-
-  void doWordEval() async {
-    
-    String timestamp =  DateTime.now().millisecondsSinceEpoch.toString();
-    String connectSig = sha1.convert(utf8.encode("$appKey$timestamp$secretKey")).toString();
-    String startSig = sha1.convert(utf8.encode("$appKey$timestamp$userId$secretKey")).toString();
-    String tokenId = DateTime.now().millisecondsSinceEpoch.toString();
-    var params = {
-      "connect": {
-        "cmd": "connect",
-        "param": {
-           "sdk": {
-             "version": 16777472,
-             "source": 9,
-             "protocol": 2
-           },
-          "app": {
-            "applicationId": appKey,
-            "sig": connectSig,
-            "timestamp": timestamp
-          }
-        }
-      },
-      "start": {
-        "cmd": "start",
-        "param": {
-          "app": {
-            "applicationId": appKey,
-            "sig": startSig,
-            "userId": userId,
-            "timestamp": timestamp
-          },
-          "audio": {
-            "audioType": audioType,
-            "sampleRate": audioSampleRate,
-            "channel": 1,
-            "sampleBytes":2
-          },
-          "request": {
-            "refText": refText,
-            "tokenId": tokenId
-          }
-        }
-      }
-    };
-
-    rootBundle.load(audioPath).then((ByteData data) async {
-      var url = Uri.https(baseHOST, wordCore);
-      var request = http.MultipartRequest("POST", url)
-        ..fields["text"] = jsonEncode(params)
-        ..files.add(http.MultipartFile.fromBytes("audio", data.buffer.asUint8List()))
-        ..headers["Request-Index"] = "0";
-
-      var response = await request.send();
-      if(response.statusCode != 200) {
-        resultController.text = "HTTP status code ${response.statusCode}";
-      } else {
-         response.stream.transform(utf8.decoder).join().then((String str) {
-           if(str.contains("error")) {
-             resultController.text = str;
-           } else {
-             var respJson = jsonDecode(str);
-             resultController.text = "overall: ${respJson["result"]["overall"]}";
-           }
-         });
-      }
-    });
-
-
-  }
-
-  void doSentEval() {
-    String timestamp =  DateTime.now().millisecondsSinceEpoch.toString();
-    String connectSig = sha1.convert(utf8.encode("$appKey$timestamp$secretKey")).toString();
-    String startSig = sha1.convert(utf8.encode("$appKey$timestamp$userId$secretKey")).toString();
-    String tokenId = DateTime.now().millisecondsSinceEpoch.toString();
-    var params = {
-      "connect": {
-        "cmd": "connect",
-        "param": {
-           "sdk": {
-             "version": 16777472,
-             "source": 9,
-             "protocol": 2
-           },
-          "app": {
-            "applicationId": appKey,
-            "sig": connectSig,
-            "timestamp": timestamp
-          }
-        }
-      },
-      "start": {
-        "cmd": "start",
-        "param": {
-          "app": {
-            "applicationId": appKey,
-            "sig": startSig,
-            "userId": userId,
-            "timestamp": timestamp
-          },
-          "audio": {
-            "audioType": audioType,
-            "sampleRate": audioSampleRate,
-            "channel": 1,
-            "sampleBytes":2
-          },
-          "request": {
-            "refText": refText,
-            "tokenId": tokenId
-          }
-        }
-      }
-    };
-
-    rootBundle.load(audioPath).then((ByteData data) async {
-      var url = Uri.https(baseHOST, sentCore);
-      var request = http.MultipartRequest("POST", url)
-        ..fields["text"] = jsonEncode(params)
-        ..files.add(http.MultipartFile.fromBytes("audio", data.buffer.asUint8List()))
-        ..headers["Request-Index"] = "0";
-
-      var response = await request.send();
-      if(response.statusCode != 200) {
-        resultController.text = "HTTP status code ${response.statusCode}";
-      } else {
-         response.stream.transform(utf8.decoder).join().then((String str) {
-           if(str.contains("error")) {
-             resultController.text = str;
-           } else {
-             var respJson = jsonDecode(str);
-             resultController.text = "overall: ${respJson["result"]["overall"]}";
-           }
-         });
-      }
-    });
-  }
 }
 class SentenceEvaluationPage extends StatelessWidget {
   const SentenceEvaluationPage({super.key});
@@ -333,6 +99,18 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
   FlutterSoundRecorder? _recorder = FlutterSoundRecorder();
   bool _isRecording = false;
   late String _recordedFilePath;
+  late String _currentWord;
+  TextEditingController resultController = new TextEditingController();
+
+  final String appKey = app; //from keys.dart (untracked, holds appKey and secretKey)
+  final String secretKey = secret;
+  final String userId = "rsarikonda";
+  final String baseHOST = "api.speechsuper.com";
+
+  final String wordCore = "word.eval.promax"; // Change the coreType according to your needs.
+  final String sentCore = "sent.eval.promax";
+  final audioType = "mp3"; // Change the audio type corresponding to the audio file.
+  final audioSampleRate = "16000";
 
 
   Future<void> storeValue(String key, String value) async {
@@ -373,30 +151,39 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
     }
   }*/ //this permission is for using external storage like MicroSDs
 
-
-
   Future<String?> getSavePath() async {
-    Directory? directory = Directory('/storage/emulated/0/Download');
-    if (!(await directory.exists())) {
-      directory =
-          await getDownloadsDirectory(); // Handle case where external storage unavailable
-    }
-
+  Directory? directory = await getApplicationDocumentsDirectory();
+  if (directory != null) {
     final filename = await showDialog(
-      context: NavigationService
-          .navigatorKey.currentContext!, 
+      context: NavigationService.navigatorKey.currentContext?? context,
       builder: (context) => const SaveFileDialog(),
     );
-    String? finalPath =
-        filename != null ? '${directory!.path}/$filename.mp4' : null;
-    //print(finalPath);
-    return finalPath;
+
+    if (filename != null) {
+      setState(() {
+        _recordedFilePath = '${directory.path}/$filename.mp3';
+      });
+      print("Current File Path: ${directory.path}/$filename.mp3");
+      return '${directory.path}/$filename.mp3';
+    } else {
+      print("Error: File name not provided.");
+      return null;
+    }
+  } else {
+    print("Error: Documents directory not available.");
+    return null;
+  }
   }
 
   @override
   void initState() {
     super.initState();
     requestMicrophonePermission();
+    _loadRandomWord().then((word) {
+      setState(() {
+        _currentWord = word;
+      });
+    });
     _recorder!.openRecorder().then((value) => setState(() {}));
   }
 
@@ -409,7 +196,7 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
 
   Future<void> _startRecording() async {
     _recordedFilePath = await getSavePath() ?? '';
-    print(_recordedFilePath);
+    print("PATH RIGHT HERE:" + _recordedFilePath);
     await _recorder!.startRecorder(toFile: _recordedFilePath);
     setState(() {
       _isRecording = true;
@@ -417,7 +204,23 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
   }
 
   Future<void> _stopRecording() async {
-    await _recorder!.stopRecorder();
+    // Stop the recording and get the file path
+    String filePath = await _recorder!.stopRecorder() as String;
+
+    // Check if the file exists
+    final fileExists = await File(filePath).exists();
+    if (!fileExists) {
+      print('Error: File does not exist at path: $filePath');
+      return;
+    }
+
+    // Check if the file is empty
+    final fileSize = await File(filePath).length();
+    if (fileSize == 0) {
+      print('Error: File is empty at path: $filePath');
+      return;
+    }
+    
     setState(() {
       _isRecording = false;
     });
@@ -431,8 +234,84 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
     String jsonString = await rootBundle.loadString('./assets/common.json');
     Map map = await jsonDecode(jsonString);
     List<String> words = await map["commonWords"].cast<String>();
+
+    String word = words[Random().nextInt(words.length)];
     
-    return words[Random().nextInt(words.length)];
+    setState(() {
+      _currentWord = word;
+    });
+
+    return word;
+  }
+
+  void doWordEval() async {
+    
+    String timestamp =  DateTime.now().millisecondsSinceEpoch.toString();
+    String connectSig = sha1.convert(utf8.encode("$appKey$timestamp$secretKey")).toString();
+    String startSig = sha1.convert(utf8.encode("$appKey$timestamp$userId$secretKey")).toString();
+    String tokenId = DateTime.now().millisecondsSinceEpoch.toString();
+    var params = {
+      "connect": {
+        "cmd": "connect",
+        "param": {
+           "sdk": {
+             "version": 16777472,
+             "source": 9,
+             "protocol": 2
+           },
+          "app": {
+            "applicationId": appKey,
+            "sig": connectSig,
+            "timestamp": timestamp
+          }
+        }
+      },
+      "start": {
+        "cmd": "start",
+        "param": {
+          "app": {
+            "applicationId": appKey,
+            "sig": startSig,
+            "userId": userId,
+            "timestamp": timestamp
+          },
+          "audio": {
+            "audioType": audioType,
+            "sampleRate": audioSampleRate,
+            "channel": 1,
+            "sampleBytes":2
+          },
+          "request": {
+            "refText": _currentWord,
+            "tokenId": tokenId
+          }
+        }
+      }
+    };
+
+    rootBundle.load(_recordedFilePath).then((ByteData data) async {
+      var url = Uri.https(baseHOST, wordCore);
+      var request = http.MultipartRequest("POST", url)
+        ..fields["text"] = jsonEncode(params)
+        ..files.add(http.MultipartFile.fromBytes("audio", data.buffer.asUint8List()))
+        ..headers["Request-Index"] = "0";
+
+      var response = await request.send();
+      if(response.statusCode != 200) {
+        resultController.text = "HTTP status code ${response.statusCode}";
+      } else {
+         response.stream.transform(utf8.decoder).join().then((String str) {
+           if(str.contains("error")) {
+             resultController.text = str;
+           } else {
+             var respJson = jsonDecode(str);
+             resultController.text = "overall: ${respJson["result"]["overall"]}";
+           }
+         });
+      }
+    });
+
+
   }
 
   @override
@@ -444,19 +323,20 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          FutureBuilder<String>(
-            future: _loadRandomWord(),
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting)
-                return const Center(child: CircularProgressIndicator());
-              else {
-                if (snapshot.hasError)
-                  return Center(child: Text('Error: ${snapshot.error} \n Stack: ${snapshot.stackTrace}'));
-                else
-                  return Center(child: Text('The word you need to say is: ${snapshot.data}'));
-              }
-            },
-          ),
+          Center(child: Text('The word you need to say is: $_currentWord')),
+          TextField(
+                    keyboardType: TextInputType.multiline,
+                    maxLength: null,
+                    minLines: 6,
+                    maxLines: 22,
+                    readOnly: true,
+                    controller: resultController,
+                    decoration: const InputDecoration(hintText: "Result:", contentPadding: const EdgeInsets.symmetric(vertical: 20.0),),
+                  ),
+          ElevatedButton(
+            onPressed: doWordEval,
+            child: const Text('Press After Recording'),
+            ),
         ],
       ),
       floatingActionButton: FloatingActionButton(

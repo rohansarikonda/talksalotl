@@ -16,7 +16,7 @@ class _SaveFileDialogState extends State<SaveFileDialog> {
       title: const Text('Save Recording'),
       content: TextField(
         controller: _filenameController,
-        decoration: const InputDecoration(hintText: 'Enter filename'),
+        decoration: const InputDecoration(hintText: 'Enter any filename'),
       ),
       actions: [
         TextButton(
