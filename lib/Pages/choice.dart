@@ -1,8 +1,10 @@
 // ignore_for_file: avoid_print
 
+import 'package:flutter/material.dart';
+import '../constants.dart';
+import 'fitb.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart';
 import '../keys.dart';
@@ -16,83 +18,106 @@ import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 //all above packages are for the audio recording
 import 'package:shared_preferences/shared_preferences.dart'; //for high score storage
 
-class EvalScreen extends StatefulWidget {
-  const EvalScreen({Key? key}) : super(key: key);
+
+class Choice extends StatefulWidget {
+  const Choice({super.key});
 
   @override
-  State<EvalScreen> createState() => _EvalScreenState();
+  State<Choice> createState() => _ChoiceState();
 }
 
-class _EvalScreenState extends State<EvalScreen> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => WordEvaluationPage()),
-                      );
-                    },
-                    style: ButtonStyle(
-                      overlayColor: MaterialStateProperty.all<Color>(Colors.transparent), //splashColor
-                      backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFFFC800)),
-                      elevation: MaterialStateProperty.all<double>(0),
-                    ),
-                    child: const Text("Click me to do a word evaluation!")
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SentenceEvaluationPage()),
-                      );
-                    },
-                    style: ButtonStyle(
-                      overlayColor: MaterialStateProperty.all<Color>(Colors.transparent), //splashColor
-                      backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFFFC800)),
-                      elevation: MaterialStateProperty.all<double>(0),
-                    ),
-                    child: const Text("Click me to do a sentence evaluation!")
-                  )
-                ],
-            )
-        )
-    );
-  }
-}
-class SentenceEvaluationPage extends StatelessWidget {
-  const SentenceEvaluationPage({super.key});
-
+class _ChoiceState extends State<Choice> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sentence Evaluation'),
+        title: const Text('Choose Pronunciation or Comprehension',
+            style: TextStyle(fontSize: 20)),
       ),
-      body: const Center(
-        child: Text('Sentence Evaluation Page'),
+      body: Container(
+        color: AppConstants
+            .backgroundColor1, // Set your desired background color here
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              // GestureDetector(
+              //   onTap: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(builder: (context) => FITB()),
+              //     );
+              //   },
+              //   child: const Text('Navigate to Comprehension Questions'),
+              // ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const FITB(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize:
+                        const Size(350, 100), // Set the minimum size of the button
+                    textStyle: const TextStyle(
+                      fontSize: 30, // Adjust the font size here
+                    ),
+                  ),
+                  child: const Text('Comprehension'),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const WordEvaluationPage())
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize:
+                        const Size(350, 100), // Set the minimum size of the button
+                    textStyle: const TextStyle(
+                      fontSize: 30, // Adjust the font size here
+                    ),
+                  ),
+                  child: const Text('Pronunciation'),
+                ),
+              ),
+              // GestureDetector(
+              //   onTap: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(builder: (context) => EvalScreen()),
+              //     );
+              //   },
+              //   child: const Text('Navigate to Pronunciation Questions'),
+              // ),
+            ],
+          ),
+        ),
       ),
     );
   }
+
+
+
 }
 
 class WordEvaluationPage extends StatefulWidget {
-  const WordEvaluationPage({Key? key}) : super(key: key);
+  const WordEvaluationPage({super.key});
 
   @override
-  _WordEvaluationPageState createState() => _WordEvaluationPageState();
+  WordEvaluationPageState createState() => WordEvaluationPageState();
 }
 
-class _WordEvaluationPageState extends State<WordEvaluationPage> {
+class WordEvaluationPageState extends State<WordEvaluationPage> {
   FlutterSoundRecorder? _recorder = FlutterSoundRecorder();
   bool _isRecording = false;
   late String _recordedFilePath;
@@ -128,7 +153,7 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
     if (!(microphoneStatus.isGranted)) {
       await Permission.microphone.request();
     }
-    print("MICROPHONE:" + microphoneStatus.toString());
+    print("MICROPHONE:$microphoneStatus");
   }
 
   Future<void> requestStoragePermissions() async {
@@ -137,7 +162,7 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
       await Permission.storage.request();
     }
 
-    print("STORAGE:" + storageStatus.toString());
+    print("STORAGE:$storageStatus");
   }
 
   Future<void> requestAudioPermissions() async {
@@ -146,7 +171,7 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
       await Permission.audio.request();
     }
 
-    print("AUDIO: " + audioStatus.toString());
+    print("AUDIO: $audioStatus");
   }
 
   Future<void> requestAllPermissions() async {
@@ -166,6 +191,7 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
   Future<String?> getSavePath() async {
   Directory? directory = await getApplicationDocumentsDirectory();
   print("INITIAL DIRECTORY: ${directory.path}");
+  // ignore: unnecessary_null_comparison
   if (directory != null) {
     /*
     final filename = await showDialog(
@@ -220,7 +246,7 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
     print("Error: No path retrieved from getSavePath");
     return;
   }
-  print("CURRENT FILE PATH:" + filePath);
+  print("CURRENT FILE PATH:$filePath");
   setState(() { 
     _isRecording = true;
     _recordedFilePath = filePath;  // Set path directly
@@ -362,53 +388,57 @@ class _WordEvaluationPageState extends State<WordEvaluationPage> {
   appBar: AppBar(
     title: const Text('Word Evaluation'),
   ),
-  body: Column(
-  mainAxisAlignment: MainAxisAlignment.center,
-  children: <Widget>[
-    Column(
-      children: <Widget>[
-        const Text(
-          'The word you need to say is:',
-          style: TextStyle(
-            fontSize: 30.0,
+  body: Stack(
+    children: <Widget>[
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              const Text('The word you need to say is:'),
+              Text(
+                _currentWord,
+                style: const TextStyle(
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
+          Expanded(
+            child: TextField(
+              controller: resultController,
+              style: const TextStyle(
+                fontSize: 80.0,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF8eb8e5),
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
-        Text(
-          _currentWord,
-          style: const TextStyle(
-            fontSize: 50.0,
-            fontWeight: FontWeight.bold,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
-    ),
-    Expanded(
-      child: TextField(
-        keyboardType: TextInputType.multiline,
-        maxLength: null,
-        minLines: 6,
-        maxLines: null,
-        readOnly: true,
-        controller: resultController,
-        style: const TextStyle(
-          fontSize: 80.0,
-          fontWeight: FontWeight.bold,
-          color: Color(0xFF8eb8e5),
-        ),
-        textAlign: TextAlign.center,
+        ],
       ),
-    ),
-    ElevatedButton(
-      onPressed: doWordEval,
-      child: const Text('Press After Recording'),
-    ),
-  ],
-),
-  floatingActionButton: FloatingActionButton(
-    onPressed: _isRecording ? _stopRecording : _startRecording,
-    backgroundColor: Colors.blue,
-    child: Icon(_isRecording ? Icons.stop : Icons.mic),
+      Positioned(
+        bottom: 50.0,
+        left: 0.0,
+        right: 0.0,
+        child: Center(
+          child: FloatingActionButton(
+            onPressed: () async {
+              if (_isRecording) {
+                await _stopRecording();
+                doWordEval();
+              } else {
+                _startRecording();
+              }
+            },
+            backgroundColor: Colors.blue,
+            child: Icon(_isRecording ? Icons.stop : Icons.mic),
+          ),
+        ),
+      ),
+    ],
   ),
 );
   }

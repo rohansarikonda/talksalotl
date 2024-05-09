@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import '../Pages/feelings.dart';
-import 'package:flutter_sound/flutter_sound.dart';
-import './Pages/eval.dart';
 
 void main() {
  runApp(const MainApp());
@@ -22,10 +20,10 @@ class SplashScreen extends StatefulWidget {
  const SplashScreen({super.key});
 
  @override
- _SplashScreenState createState() => _SplashScreenState();
+ SplashScreenState createState() => SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class SplashScreenState extends State<SplashScreen> {
  @override
  void initState() {
     super.initState();
@@ -103,15 +101,6 @@ class HomePage extends StatelessWidget {
                 );
               },
               child: const Text('Navigate to Feelings Page'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                 context,
-                 MaterialPageRoute(builder: (context) => EvalScreen()),
-                );
-              },
-              child: const Text('Start Pronunciation Assessment'),
             ),
           ],
         ),
