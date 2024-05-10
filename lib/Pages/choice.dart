@@ -1,5 +1,4 @@
 // ignore_for_file: avoid_print
-
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import 'fitb.dart';
@@ -120,11 +119,15 @@ class WordEvaluationPage extends StatefulWidget {
 class WordEvaluationPageState extends State<WordEvaluationPage> {
   FlutterSoundRecorder? _recorder = FlutterSoundRecorder();
   bool _isRecording = false;
+  bool _highScore = false;
+  double _currentHighScore = 0.0;
   late String _recordedFilePath;
   late String _currentWord;
   TextEditingController resultController = TextEditingController();
 
-  final String appKey = app; //from keys.dart (untracked, holds appKey and secretKey)
+  //below are constants for the API calls
+
+  final String appKey = app; //app and secret are from keys.dart (untracked, holds appKey and secretKey)
   final String secretKey = secret;
   final String userId = "rsarikonda";
   final String baseHOST = "api.speechsuper.com";
@@ -141,14 +144,16 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
     await prefs.setString(key, value);
   }
 
-  Future<String?> retrieveValue(String key) async {
+  Future<void> retrieveValue(String key) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(key);
+    setState(() {
+      _currentHighScore = double.parse(prefs.getString(key) ?? "0.0");
+    });
   }
 
   //REQUEST PERMISSIONS
 
-  Future<void> requestMicrophonePermission() async {
+  Future<void> requestMicrophonePermission() async { 
     final microphoneStatus = await Permission.microphone.status;
     if (!(microphoneStatus.isGranted)) {
       await Permission.microphone.request();
@@ -188,6 +193,8 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
   }*/ //this permission is for using external storage like SD cards
 
   //AUDIO RECORDING
+
+  //get path for where to save audio files
   Future<String?> getSavePath() async {
   Directory? directory = await getApplicationDocumentsDirectory();
   print("INITIAL DIRECTORY: ${directory.path}");
@@ -221,18 +228,20 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
   }
   }
 
+  //do this on initialization
   @override
   void initState() {
     super.initState();
-    requestAllPermissions();
-    _loadRandomWord().then((word) {
+    requestAllPermissions(); //get all perms
+    _loadRandomWord().then((word) { //load the word 
       setState(() {
         _currentWord = word;
       });
     });
-    _recorder!.openRecorder().then((value) => setState(() {}));
+    _recorder!.openRecorder().then((value) => setState(() {})); //make the audio recorder
   }
 
+  //get rid of the recorder
   @override
   void dispose() {
     _recorder!.closeRecorder();
@@ -240,8 +249,9 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
     super.dispose();
   }
 
-  Future<void> _startRecording() async {
-  String filePath = await getSavePath() ?? 'placeholder';
+  //start the recording
+  Future<void> _startRecording() async { 
+  String filePath = await getSavePath() ?? 'placeholder'; //handle the case for no path recieved
   if (filePath.isEmpty) {
     print("Error: No path retrieved from getSavePath");
     return;
@@ -254,18 +264,19 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
   print("RECORDED FILE PATH: $_recordedFilePath");
   
   try {
-    await _recorder!.startRecorder(toFile: filePath);
+    await _recorder!.startRecorder(toFile: filePath); //error handling in case of recorder malfunction
   } catch (e) {
     print("Error starting recorder: $e");
   }
 }
 
+  //stop the recording
   Future<void> _stopRecording() async {
     setState(() {
-      _isRecording = false;
+      _isRecording = false; //set the recording state to false
     });
 
-    try {
+    try { //error handling with recorder closing
       await _recorder!.stopRecorder();
     } catch (e) {
       print("Error Closing Recorder: $e");
@@ -285,7 +296,7 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
     }
   }
 
-  //WORD FOR AUDIO
+  //load the word for the user to say
   Future<String> _loadRandomWord() async {
 
     Directory current = Directory.current;
@@ -303,14 +314,15 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
 
     return word;
   }
-
+  
+  //method for pronunciation evaluation
   void doWordEval() async {
     
-    String timestamp =  DateTime.now().millisecondsSinceEpoch.toString();
-    String connectSig = sha1.convert(utf8.encode("$appKey$timestamp$secretKey")).toString();
-    String startSig = sha1.convert(utf8.encode("$appKey$timestamp$userId$secretKey")).toString();
-    String tokenId = DateTime.now().millisecondsSinceEpoch.toString();
-    var params = {
+    String timestamp =  DateTime.now().millisecondsSinceEpoch.toString(); //timestamp of api call
+    String connectSig = sha1.convert(utf8.encode("$appKey$timestamp$secretKey")).toString(); //signature of this connection
+    String startSig = sha1.convert(utf8.encode("$appKey$timestamp$userId$secretKey")).toString(); //signature of the start call
+    String tokenId = DateTime.now().millisecondsSinceEpoch.toString(); //id of the token
+    var params = { //parameters for connecting and starting the api call
       "connect": {
         "cmd": "connect",
         "param": {
@@ -350,7 +362,7 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
     };
 
     final file = File(_recordedFilePath); //load the file from the filesystem
-    if (!await file.exists()) {
+    if (!await file.exists()) { //if the file doesn't exist
       print("ERROR: THE FILE DOES NOT EXIST AT: $_recordedFilePath");
       return;
     }
@@ -367,19 +379,33 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
 
       var response = await request.send(); //get the response back
       if(response.statusCode != 200) {
-        resultController.text = "HTTP status code ${response.statusCode}";
+        resultController.text = "HTTP status code ${response.statusCode}"; //if something went wrong
       } else {
-         response.stream.transform(utf8.decoder).join().then((String str) {
+         response.stream.transform(utf8.decoder).join().then((String str) { //decode the response
            if(str.contains("error")) {
-             resultController.text = str; //handle errors
-           } else {
-             var respJson = jsonDecode(str);
-             resultController.text = "${respJson["result"]["overall"]}"; //make the text in resultController the score
-           }
+          resultController.text = str; //handle errors in the response
+            } else {
+              var respJson = jsonDecode(str); //decode the json
+              double currentScore = double.parse("${respJson["result"]["overall"]}"); //set the current score
+              print("CURRENT SCORE: $currentScore"); //print the current score (for debugging)
+              print("CURRENT HIGH SCORE: $_currentHighScore"); //print the current high score (for debugging)
+              if (currentScore > _currentHighScore) {
+                setState(() {
+                  _highScore = true;
+                });
+                print("NEW HIGH SCORE!");
+                storeValue(_currentWord, currentScore.toString());
+              }
+              else {
+                setState(() {
+                  _highScore = false;
+                });
+                print("NO NEW HIGH SCORE!");
+              }
+              resultController.text = currentScore.toString(); //make the value in resultController the score
+            }
          });
       }
-
-
   }
 
   @override
@@ -395,7 +421,7 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
         children: <Widget>[
           Column(
             children: <Widget>[
-              const Text('The word you need to say is:'),
+              const Text('The word you need to say is:'), //helper text
               Text(
                 _currentWord,
                 style: const TextStyle(
@@ -408,7 +434,7 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
           ),
           Expanded(
             child: TextField(
-              controller: resultController,
+              controller: resultController, //display the word they need to say
               style: const TextStyle(
                 fontSize: 80.0,
                 fontWeight: FontWeight.bold,
@@ -417,6 +443,16 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
               textAlign: TextAlign.center,
             ),
           ),
+           if (_highScore)
+              const Text(
+                'New high score!',
+                style: TextStyle(
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                ),
+                textAlign: TextAlign.center,
+              ),
         ],
       ),
       Positioned(
@@ -424,7 +460,7 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
         left: 0.0,
         right: 0.0,
         child: Center(
-          child: FloatingActionButton(
+          child: FloatingActionButton( //button to start and stop recording; calls doWordEval() when stopped
             onPressed: () async {
               if (_isRecording) {
                 await _stopRecording();
