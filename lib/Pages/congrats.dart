@@ -9,6 +9,7 @@ class Congrats extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Congratulations!', style: TextStyle(fontSize: 35)),
+        automaticallyImplyLeading: false,
       ),
       body: Container(
         color: AppConstants

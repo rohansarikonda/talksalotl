@@ -1,0 +1,516 @@
+    [
+        {
+            "question": "I am excited to eat _____ for dinner",
+            "answers": [
+                {"answer": "A: Pizza", "correct": "true"}, 
+                {"answer": "B: Toys", "correct": "false"}, 
+                {"answer": "C: Pens", "correct": "false"}, 
+                {"answer": "D: Pencils", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "After lunch, I ____ with my friends",
+            "answers": [
+                {"answer": "A: Water Bottle", "correct": "false"}, 
+                {"answer": "B: Paper", "correct": "false"}, 
+                {"answer": "C: Headphones", "correct": "false"}, 
+                {"answer": "D: Play", "correct": "true"}
+            ]
+        }, 
+        {
+            "question": "I pick up the ______ when it rings",
+            "answers": [
+                {"answer": "A: Water Bottle", "correct": "false"}, 
+                {"answer": "B: Magnet", "correct": "false"}, 
+                {"answer": "C: Phone", "correct": "true"}, 
+                {"answer": "D: Eraser", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "Every morning, I brush my _____",
+            "answers": [
+                {"answer": "A: Leg", "correct": "false"}, 
+                {"answer": "B: Teeth", "correct": "true"}, 
+                {"answer": "C: Arm", "correct": "false"}, 
+                {"answer": "D: Head", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "I love to ____ my book",
+            "answers": [
+                {"answer": "A: Read", "correct": "true"}, 
+                {"answer": "B: Play", "correct": "false"}, 
+                {"answer": "C: Jump", "correct": "false"}, 
+                {"answer": "D: Scream", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "The fire truck is ___",
+            "answers": [
+                {"answer": "A: Blue", "correct": "false"}, 
+                {"answer": "B: Green", "correct": "false"}, 
+                {"answer": "C: Yellow", "correct": "false"}, 
+                {"answer": "D: Red", "correct": "true"}
+            ]
+        }, 
+        {
+            "question": "The ________ helps sick people",
+            "answers": [
+                {"answer": "A: Bank", "correct": "false"}, 
+                {"answer": "B: Restaurant", "correct": "false"}, 
+                {"answer": "C: Hospital", "correct": "true"}, 
+                {"answer": "D: Hotel", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "I use my ______ to write",
+            "answers": [
+                {"answer": "A: Pencil", "correct": "true"}, 
+                {"answer": "B: Water Bottle", "correct": "false"}, 
+                {"answer": "C: Fire Hydrant", "correct": "false"}, 
+                {"answer": "D: Lunchbox", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "My teacher ______ when she is happy",
+            "answers": [
+                {"answer": "A: Groans", "correct": "false"}, 
+                {"answer": "B: Yells", "correct": "false"}, 
+                {"answer": "C: Cries", "correct": "false"}, 
+                {"answer": "D: Smiles", "correct": "true"}
+            ]
+        }, 
+        {
+            "question": "I take the ___ to go to school",
+            "answers": [
+                {"answer": "A: Train", "correct": "false"}, 
+                {"answer": "B: Bus", "correct": "true"}, 
+                {"answer": "C: Airplane", "correct": "false"}, 
+                {"answer": "D: Cruise", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": " I like to kick the ball with my foot in _____",
+            "answers": [
+                {"answer": "A: Soccer", "correct": "true"}, 
+                {"answer": "B: Tennis", "correct": "false"}, 
+                {"answer": "C: Basketball", "correct": "false"}, 
+                {"answer": "D: Baseball", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "Bedtime stories help me go to _____ ",
+            "answers": [
+                {"answer": "A: Jump", "correct": "false"}, 
+                {"answer": "A: Wake up", "correct": "false"}, 
+                {"answer": "A: Sleep", "correct": "true"}, 
+                {"answer": "A: Fly", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "Birds always ______ when kids get too close",
+            "answers": [
+                {"answer": "A: Laugh", "correct": "false"}, 
+                {"answer": "B: Fly", "correct": "true"}, 
+                {"answer": "C: Help", "correct": "false"}, 
+                {"answer": "D: Cry", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "I use numbers in my ____ class",
+            "answers": [
+                {"answer": "A: Math", "correct": "true"}, 
+                {"answer": "B: English", "correct": "false"}, 
+                {"answer": "C: Gym", "correct": "false"}, 
+                {"answer": "D: History", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "All of my books go in the _________",
+            "answers": [
+                {"answer": "A: Plane", "correct": "false"}, 
+                {"answer": "B: Bus", "correct": "false"}, 
+                {"answer": "C: Car", "correct": "false"}, 
+                {"answer": "D: Bookshelf", "correct": "true"}
+            ]
+        }, 
+        {
+            "question": "I use my _____ to listen to music",
+            "answers": [
+                {"answer": "A: Headphones", "correct": "true"}, 
+                {"answer": "B: Pear", "correct": "false"}, 
+                {"answer": "C: Apple", "correct": "false"}, 
+                {"answer": "D: Banana", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "The _____ cat is very scary",
+            "answers": [
+                {"answer": "A: Pink", "correct": "false"}, 
+                {"answer": "B: Blue", "correct": "false"}, 
+                {"answer": "C: Red", "correct": "false"}, 
+                {"answer": "D: Black", "correct": "true"}
+            ]
+        }, 
+        {
+            "question": "All of the students wear a ________ to school",
+            "answers": [
+                {"answer": "A: Refrigerator", "correct": "false"}, 
+                {"answer": "B: Backpack", "correct": "true"}, 
+                {"answer": "C: Car", "correct": "false"}, 
+                {"answer": "D: Bus", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "My _______ teaches me everyday at school",
+            "answers": [
+                {"answer": "A: Teacher", "correct": "true"}, 
+                {"answer": "B: Giraffe", "correct": "false"}, 
+                {"answer": "C: Dog", "correct": "false"}, 
+                {"answer": "D: Cat", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "You can find a _____ in the ocean",
+            "answers": [
+                {"answer": "A: Tomato", "correct": "false"}, 
+                {"answer": "B: Butterfly", "correct": "false"}, 
+                {"answer": "C: Chicken", "correct": "false"}, 
+                {"answer": "D: Fish", "correct": "true"}
+            ]
+        }, 
+        {
+            "question": "I need a lot of _____ to buy a car",
+            "answers": [
+                {"answer": "A: Money", "correct": "true"}, 
+                {"answer": "B: Buses", "correct": "false"}, 
+                {"answer": "C: Cars", "correct": "false"}, 
+                {"answer": "D: Trains", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "I learn about the water cycle in my _____ class",
+            "answers": [
+                {"answer": "A: Math", "correct": "false"}, 
+                {"answer": "B: History", "correct": "false"}, 
+                {"answer": "C: Science", "correct": "true"}, 
+                {"answer": "D: English", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "I love to play __________ in the summer",
+            "answers": [
+                {"answer": "A: Homework", "correct": "false"}, 
+                {"answer": "B: Volleyball", "correct": "true"}, 
+                {"answer": "C: Classwork", "correct": "false"}, 
+                {"answer": "D: Ice Hockey", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "I wear my ________ to sleep",
+            "answers": [
+                {"answer": "A: Tuxedo", "correct": "false"}, 
+                {"answer": "B: Suit", "correct": "false"}, 
+                {"answer": "C: Polo Shirt", "correct": "false"}, 
+                {"answer": "D: Pajamas", "correct": "true"}
+            ]
+        }, 
+        {
+            "question": "I like to pour ____ in my cereal",
+            "answers": [
+                {"answer": "A: Milk", "correct": "true"}, 
+                {"answer": "B: Cat", "correct": "false"}, 
+                {"answer": "C: Dog", "correct": "false"}, 
+                {"answer": "D: Fox", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "I get ____  for my birthday",
+            "answers": [
+                {"answer": "A: Classwork", "correct": "false"}, 
+                {"answer": "B: Homework", "correct": "false"}, 
+                {"answer": "C: Gifts", "correct": "true"}, 
+                {"answer": "D: Chores", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "I like to ride my ____ on the sidewalk",
+            "answers": [
+                {"answer": "A: Bike", "correct": "true"}, 
+                {"answer": "B: Airplane", "correct": "false"}, 
+                {"answer": "C: Train", "correct": "false"}, 
+                {"answer": "D: Ship", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "_____ make milk",
+            "answers": [
+                {"answer": "A: Cows", "correct": "true"}, 
+                {"answer": "B: Dogs", "correct": "false"}, 
+                {"answer": "C: Frogs", "correct": "false"}, 
+                {"answer": "D: Foxes", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "The _____ comes every night",
+            "answers": [
+                {"answer": "A: Code", "correct": "false"}, 
+                {"answer": "B: Sun", "correct": "false"}, 
+                {"answer": "C: Moon", "correct": "true"}, 
+                {"answer": "D: Earth", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "The clock tells me the _____",
+            "answers": [
+                {"answer": "A: Time", "correct": "true"}, 
+                {"answer": "B: Doctor", "correct": "false"}, 
+                {"answer": "C: Engineer", "correct": "false"}, 
+                {"answer": "D: Emotions", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "A ____ lives in a cave",
+            "answers": [
+                {"answer": "A: Firefighter", "correct": "false"}, 
+                {"answer": "B: Engineer", "correct": "false"}, 
+                {"answer": "C: Bat", "correct": "true"}, 
+                {"answer": "D: Doctor", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "The teacher goes over _________",
+            "answers": [
+                {"answer": "A: Homework", "correct": "true"}, 
+                {"answer": "B: Bananas", "correct": "false"}, 
+                {"answer": "C: Oranges", "correct": "false"}, 
+                {"answer": "D: Apples", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "After I make a mess, I _______",
+            "answers": [
+                {"answer": "A: Apple", "correct": "false"}, 
+                {"answer": "B: Clean Up", "correct": "true"}, 
+                {"answer": "C: Giving", "correct": "false"}, 
+                {"answer": "D: Following", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "_____ come from Apple Trees",
+            "answers": [
+                {"answer": "A: Water", "correct": "false"}, 
+                {"answer": "B: Orange Juice", "correct": "false"}, 
+                {"answer": "C: Bananas", "correct": "false"}, 
+                {"answer": "D: Apples", "correct": "true"}
+            ]
+        },  
+        {
+            "question": "Crayons ______",
+            "answers": [
+                {"answer": "A: Color", "correct": "true"}, 
+                {"answer": "B: Read", "correct": "false"}, 
+                {"answer": "C: Jump", "correct": "false"}, 
+                {"answer": "D: Spin", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "My toys go in the _________",
+            "answers": [
+                {"answer": "A: Cow", "correct": "false"}, 
+                {"answer": "B: Monkey", "correct": "false"}, 
+                {"answer": "C: Dad", "correct": "false"}, 
+                {"answer": "D: Toybox", "correct": "true"}
+            ]
+        }, 
+        {
+            "question": "I wear a ______ when it is cold",
+            "answers": [
+                {"answer": "A: Sunglasses", "correct": "false"}, 
+                {"answer": "B: Swimsuit", "correct": "false"}, 
+                {"answer": "C: Hat", "correct": "false"}, 
+                {"answer": "D: Jacket", "correct": "true"}
+            ]
+        }, 
+        {
+            "question": "I wear  ____ when it is warm",
+            "answers": [
+                {"answer": "A: Sunglasses", "correct": "true"}, 
+                {"answer": "B: Tables", "correct": "false"}, 
+                {"answer": "C: Desks", "correct": "false"}, 
+                {"answer": "D: Chargers", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "There are a lot of _____ in the sky at night",
+            "answers": [
+                {"answer": "A: Stars", "correct": "true"}, 
+                {"answer": "B: Dinosaurs", "correct": "false"}, 
+                {"answer": "C: Moons", "correct": "false"}, 
+                {"answer": "D: Apples", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "The squirrel climbs the _____",
+            "answers": [
+                {"answer": "A: Tree", "correct": "true"}, 
+                {"answer": "B: Giraffe", "correct": "false"}, 
+                {"answer": "C: Monkey", "correct": "false"}, 
+                {"answer": "D: Rhino", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "Giraffes are very ____ animals",
+            "answers": [
+                {"answer": "A: Tall", "correct": "true"}, 
+                {"answer": "B: Large", "correct": "false"}, 
+                {"answer": "C: Small", "correct": "false"}, 
+                {"answer": "D: Short", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "Rhinos are very ____ animals",
+            "answers": [
+                {"answer": "A: Tall", "correct": "false"}, 
+                {"answer": "B: Large", "correct": "true"}, 
+                {"answer": "C: Small", "correct": "false"}, 
+                {"answer": "D: Short", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "Mice are very _____ animals",
+            "answers": [
+                {"answer": "A: Tall", "correct": "false"}, 
+                {"answer": "B: Large", "correct": "false"}, 
+                {"answer": "C: Small", "correct": "true"}, 
+                {"answer": "D: Short", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "I love to eat my chocolate ice cream with ______",
+            "answers": [
+                {"answer": "A: Bread", "correct": "false"}, 
+                {"answer": "B: Pizza", "correct": "false"}, 
+                {"answer": "C: Box", "correct": "false"}, 
+                {"answer": "D: Sprinkles", "correct": "true"}
+            ]
+        }, 
+        {
+            "question": "I water the flowers in my _____",
+            "answers": [
+                {"answer": "A: School", "correct": "false"}, 
+                {"answer": "B: Garden", "correct": "true"}, 
+                {"answer": "C: Road", "correct": "false"}, 
+                {"answer": "D: Workplace", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "Whales live in the ______",
+            "answers": [
+                {"answer": "A: Ocean", "correct": "true"}, 
+                {"answer": "B: Forest", "correct": "false"}, 
+                {"answer": "C: Land", "correct": "false"}, 
+                {"answer": "D: Volcanos", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "Pandas live in the ______",
+            "answers": [
+                {"answer": "A: Ocean", "correct": "false"}, 
+                {"answer": "B: Forest", "correct": "true"}, 
+                {"answer": "C: Land", "correct": "false"}, 
+                {"answer": "D: Volcanos", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "I sit in my _____ when class starts",
+            "answers": [
+                {"answer": "A: Chair", "correct": "true"}, 
+                {"answer": "B: Banana", "correct": "false"}, 
+                {"answer": "C: Chicken", "correct": "false"}, 
+                {"answer": "D: Donkey", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "_____ make a ribbit noise",
+            "answers": [
+                {"answer": "A: Frogs", "correct": "true"}, 
+                {"answer": "B: Dolphins", "correct": "false"}, 
+                {"answer": "C: Fish", "correct": "false"}, 
+                {"answer": "D: Shrimp", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "My school gives chocolate chip _______",
+            "answers": [
+                {"answer": "A: Bananas", "correct": "false"}, 
+                {"answer": "B: Papers", "correct": "false"}, 
+                {"answer": "C: Oranges", "correct": "false"}, 
+                {"answer": "D: Cookies", "correct": "true"}
+            ]
+        }, 
+        {
+            "question": "My water is held in my ______________",
+            "answers": [
+                {"answer": "A: Water Bottle", "correct": "true"}, 
+                {"answer": "B: iPad", "correct": "false"}, 
+                {"answer": "C: Basket", "correct": "false"}, 
+                {"answer": "D: Laptop", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "I use a ____ to write",
+            "answers": [
+                {"answer": "A: Jungle", "correct": "false"}, 
+                {"answer": "B: Banana", "correct": "false"}, 
+                {"answer": "C: Pencil", "correct": "true"}, 
+                {"answer": "D: Monkey", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "Most people wear suits in the _____",
+            "answers": [
+                {"answer": "A: Airplane", "correct": "false"}, 
+                {"answer": "B: Beach", "correct": "false"}, 
+                {"answer": "C: Workplace", "correct": "true"}, 
+                {"answer": "D: Train", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "I use a ____ to eat my cereal",
+            "answers": [
+                {"answer": "A: Fork", "correct": "false"}, 
+                {"answer": "B: Spoon", "correct": "true"}, 
+                {"answer": "C: Sandwich", "correct": "false"}, 
+                {"answer": "D: Knife", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "I use a ____ to eat salad",
+            "answers": [
+                {"answer": "A: Spoon", "correct": "false"}, 
+                {"answer": "B: Fork", "correct": "true"}, 
+                {"answer": "C: Knife", "correct": "false"}, 
+                {"answer": "D: Sunshine", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "I use my ______ to cut my sandwich in half",
+            "answers": [
+                {"answer": "A: Spoon", "correct": "false"}, 
+                {"answer": "B: Fork", "correct": "false"}, 
+                {"answer": "C: Knife", "correct": "true"}, 
+                {"answer": "D: Sunshine", "correct": "false"}
+            ]
+        }, 
+        {
+            "question": "I wear _____ before my shoes"
+            ,
+            "answers": [
+                {"answer": "A: Bananas", "correct": "false"}, 
+                {"answer": "B: Rhinos", "correct": "false"}, 
+                {"answer": "C: Socks", "correct": "true"}, 
+                {"answer": "D: Monkeys", "correct": "false"}
+            ]
+        }
+    ]

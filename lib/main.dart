@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import './constants.dart';
 import 'app.dart';
+import 'database/database.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await MongoDatabase.connect();
   runApp(const MainApp());
 }
 
@@ -24,6 +27,7 @@ class SplashScreen extends StatefulWidget {
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
+
 // the class below navigates to home page
 class _SplashScreenState extends State<SplashScreen> {
   @override
@@ -34,10 +38,11 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.pushReplacement(
         context,
         // MaterialPageRoute(builder: (context) => const RootPage()),
-        MaterialPageRoute(builder: (context) => App()),
+        MaterialPageRoute(builder: (context) => const App()),
       );
     });
   }
+
 // navigates within home page
   @override
   Widget build(BuildContext context) {
@@ -52,7 +57,6 @@ class _SplashScreenState extends State<SplashScreen> {
             // Navigate to the home page immediately when tapped
             Navigator.pushReplacement(
               context,
-              // MaterialPageRoute(builder: (context) => const RootPage()),
               MaterialPageRoute(builder: (context) => const App()),
             );
           },
