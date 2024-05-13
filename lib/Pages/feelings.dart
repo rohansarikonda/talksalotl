@@ -2,6 +2,7 @@ import '../constants.dart';
 import 'package:flutter/material.dart';
 import 'choice.dart';
 
+// creates page where user clicks one of the three options pertaining to how they are doing
 class Feelings extends StatelessWidget {
   const Feelings({super.key});
 
@@ -22,10 +23,7 @@ class Feelings extends StatelessWidget {
             children: <Widget>[
               GestureDetector(
                 onTap: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => const Choice()),
-                  // );
+                  
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const Choice(),
@@ -50,10 +48,7 @@ class Feelings extends StatelessWidget {
               const SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => Choice()),
-                  // );
+                  
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const Choice(),

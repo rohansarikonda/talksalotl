@@ -9,6 +9,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+// home page is created where users can input their profile name or create a profile
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
@@ -53,15 +54,7 @@ class _HomePageState extends State<HomePage> {
               child: const Text('Navigate to Feelings Page'),
             ),
             const SizedBox(height: 20),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     // Navigator.push(
-            //     //   context,
-            //     //   MaterialPageRoute(builder: (context) => const EvalScreen()),
-            //     // );
-            //   },
-            //   child: const Text('Start Pronunciation Assessment'),
-            // ),
+            
           ],
         ),
       ),

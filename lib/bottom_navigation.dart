@@ -3,13 +3,14 @@ import 'app.dart';
 import 'tab_item.dart';
 
 class BottomNavigation extends StatelessWidget {
-  const BottomNavigation({super.key, 
+  BottomNavigation({
     required this.onSelectTab,
     required this.tabs,
   });
   final ValueChanged<int> onSelectTab;
   final List<TabItem> tabs;
 
+// creates the bottom navigation bar containing home and profile buttons
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
@@ -29,6 +30,7 @@ class BottomNavigation extends StatelessWidget {
     );
   }
 
+
   BottomNavigationBarItem _buildItem(
       {required int index, required IconData icon, required String tabName}) {
     return BottomNavigationBarItem(
@@ -39,6 +41,7 @@ class BottomNavigation extends StatelessWidget {
         label: tabName);
   }
 
+// sets color of bottom navigation bar
   Color _tabColor({required int index}) {
     return AppState.currentTab == index ? Colors.cyan : Colors.grey;
   }

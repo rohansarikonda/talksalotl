@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../constants.dart';
 
+// creates page where users are at the end, congragulating them on completely their activity time
 class Congrats extends StatelessWidget {
   const Congrats({super.key});
   @override

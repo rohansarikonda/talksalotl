@@ -4,16 +4,17 @@ import 'package:flutter/material.dart';
 import '../constants.dart';
 import 'congrats.dart';
 
-class FITB extends StatefulWidget {
-  const FITB({super.key});
 
+// page where comprehension questions(fill in the black format with multiple choice) are displayed
+class FITB extends StatefulWidget {
   @override
-  FITBState createState() => FITBState();
+  _FITBState createState() => _FITBState();
 }
 
-class FITBState extends State<FITB> {
+class _FITBState extends State<FITB> {
   String _selectedOption = ''; // State variable to track the selected option
 
+// questions are displayed and users read the sentence and select the correct answer, the correct answer will light up green, while wrong ones light up red
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,11 +52,7 @@ class FITBState extends State<FITB> {
           ),
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _isRecording ? _stopRecording : _startRecording,
-      //   backgroundColor: Colors.blue,
-      //   child: Icon(_isRecording ? Icons.stop : Icons.mic),
-      // ),
+      
     );
   }
 
@@ -89,8 +86,4 @@ class FITBState extends State<FITB> {
       ),
     );
   }
-}
-
-class Style {
-  const Style();
 }

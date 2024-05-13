@@ -40,22 +40,13 @@ class _ChoiceState extends State<Choice> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              // GestureDetector(
-              //   onTap: () {
-              //     Navigator.push(
-              //       context,
-              //       MaterialPageRoute(builder: (context) => FITB()),
-              //     );
-              //   },
-              //   child: const Text('Navigate to Comprehension Questions'),
-              // ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20.0),
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => const FITB(),
+                        builder: (context) => FITB(),
                       ),
                     );
                   },
@@ -89,15 +80,6 @@ class _ChoiceState extends State<Choice> {
                   child: const Text('Pronunciation'),
                 ),
               ),
-              // GestureDetector(
-              //   onTap: () {
-              //     Navigator.push(
-              //       context,
-              //       MaterialPageRoute(builder: (context) => EvalScreen()),
-              //     );
-              //   },
-              //   child: const Text('Navigate to Pronunciation Questions'),
-              // ),
             ],
           ),
         ),
