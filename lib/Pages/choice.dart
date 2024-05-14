@@ -1,6 +1,6 @@
 // ignore_for_file: avoid_print
 import 'package:flutter/material.dart';
-import '../constants.dart';
+import '../constants.dart'; // import constants
 import 'fitb.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
@@ -9,8 +9,8 @@ import 'package:crypto/crypto.dart';
 import '../keys.dart';
 import 'dart:io';
 import 'dart:math';
-
 //all above imports are for the api calls
+
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_sound/public/flutter_sound_recorder.dart';
@@ -46,7 +46,7 @@ class _ChoiceState extends State<Choice> {
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => FITB(),
+                        builder: (context) => const FITB(),
                       ),
                     );
                   },
@@ -80,6 +80,15 @@ class _ChoiceState extends State<Choice> {
                   child: const Text('Pronunciation'),
                 ),
               ),
+              // GestureDetector(
+              //   onTap: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(builder: (context) => EvalScreen()),
+              //     );
+              //   },
+              //   child: const Text('Navigate to Pronunciation Questions'),
+              // ),
             ],
           ),
         ),
@@ -103,30 +112,31 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
   bool _isRecording = false;
   bool _highScore = false;
   double _currentHighScore = 0.0;
+  double _currentScore = 0.0;
   late String _recordedFilePath;
   late String _currentWord;
   TextEditingController resultController = TextEditingController();
 
   //below are constants for the API calls
 
-  final String appKey = app; //app and secret are from keys.dart (untracked, holds appKey and secretKey)
+  final String appKey = app; //app and secret are from keys.dart (untracked for security, holds appKey and secretKey)
   final String secretKey = secret;
   final String userId = "rsarikonda";
   final String baseHOST = "api.speechsuper.com";
 
-  final String wordCore = "word.eval.promax"; // Change the coreType according to your needs.
-  final String sentCore = "sent.eval.promax";
+  final String wordCore = "word.eval.promax"; // coretype for the word evaluation
+  final String sentCore = "sent.eval.promax"; // coretype for the sentence evaluation
   final audioType = "mp3"; // Change the audio type corresponding to the audio file.
   final audioSampleRate = "16000";
 
   //SCORE STORAGE AND RETRIEVAL
 
-  Future<void> storeValue(String key, String value) async {
+  Future<void> storeValue(String key, String value) async { //store "something" (used for high scores)
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(key, value);
   }
 
-  Future<void> retrieveValue(String key) async {
+  Future<void> retrieveValue(String key) async { //retrieve "something" (used for high scores)
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _currentHighScore = double.parse(prefs.getString(key) ?? "0.0");
@@ -135,7 +145,7 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
 
   //REQUEST PERMISSIONS
 
-  Future<void> requestMicrophonePermission() async { 
+  Future<void> requestMicrophonePermission() async {  //request microphone permission
     final microphoneStatus = await Permission.microphone.status;
     if (!(microphoneStatus.isGranted)) {
       await Permission.microphone.request();
@@ -143,7 +153,7 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
     print("MICROPHONE:$microphoneStatus");
   }
 
-  Future<void> requestStoragePermissions() async {
+  Future<void> requestStoragePermissions() async { //request storage permission
     final storageStatus = await Permission.storage.status;
     if (!(storageStatus.isGranted)) {
       await Permission.storage.request();
@@ -152,7 +162,7 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
     print("STORAGE:$storageStatus");
   }
 
-  Future<void> requestAudioPermissions() async {
+  Future<void> requestAudioPermissions() async { //request audio permission
     final audioStatus = await Permission.audio.status;
     if (!(audioStatus.isGranted)) {
       await Permission.audio.request();
@@ -161,7 +171,7 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
     print("AUDIO: $audioStatus");
   }
 
-  Future<void> requestAllPermissions() async {
+  Future<void> requestAllPermissions() async { //request all required permissions
     requestAudioPermissions();
     requestMicrophonePermission();
     requestStoragePermissions();
@@ -213,7 +223,7 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
   //do this on initialization
   @override
   void initState() {
-    super.initState();
+    super.initState(); //initState
     requestAllPermissions(); //get all perms
     _loadRandomWord().then((word) { //load the word 
       setState(() {
@@ -296,6 +306,18 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
 
     return word;
   }
+
+  String getScoreMessage(double score) { //returns the approriate message depending on their score
+    if (score >= 80 && score <= 100) {
+      return 'Very good!';
+    } else if (score >= 60 && score < 80) {
+      return 'Pretty good!';
+    } else if (score >= 30 && score < 60) {
+      return 'Needs some work.';
+    } else {
+      return 'You can do better next time!';
+    }
+  }
   
   //method for pronunciation evaluation
   void doWordEval() async {
@@ -369,6 +391,7 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
             } else {
               var respJson = jsonDecode(str); //decode the json
               double currentScore = double.parse("${respJson["result"]["overall"]}"); //set the current score
+              _currentScore = currentScore;
               print("CURRENT SCORE: $currentScore"); //print the current score (for debugging)
               print("CURRENT HIGH SCORE: $_currentHighScore"); //print the current high score (for debugging)
               if (currentScore > _currentHighScore) {
@@ -396,7 +419,9 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
   appBar: AppBar(
     title: const Text('Word Evaluation'),
   ),
-  body: Stack(
+  body: Container (
+    color: AppConstants.backgroundColor1,
+    child: Stack(
     children: <Widget>[
       Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -407,10 +432,10 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
               Text(
                 _currentWord,
                 style: const TextStyle(
-                  fontSize: 30.0,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 30.0, //big text
+                  fontWeight: FontWeight.bold, //bold text
                 ),
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.center, //center the text
               ),
             ],
           ),
@@ -418,14 +443,14 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
             child: TextField(
               controller: resultController, //display the word they need to say
               style: const TextStyle(
-                fontSize: 80.0,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF8eb8e5),
+                fontSize: 50.0, //really big text
+                fontWeight: FontWeight.bold, //make it bold
+                color: Color(0xFF8eb8e5), //colored light blue
               ),
               textAlign: TextAlign.center,
             ),
           ),
-           if (_highScore)
+           if (_highScore) //if their score was a new high score
               const Text(
                 'New high score!',
                 style: TextStyle(
@@ -435,14 +460,26 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
                 ),
                 textAlign: TextAlign.center,
               ),
+            if (_currentScore != 0) 
+              Text(
+              getScoreMessage(_currentScore),
+              style: const TextStyle(
+              fontSize: 30.0,
+              fontWeight: FontWeight.bold,
+              ),
+            textAlign: TextAlign.center,
+            ),
         ],
       ),
       Positioned(
-        bottom: 50.0,
+        bottom: 100.0,
         left: 0.0,
         right: 0.0,
         child: Center(
-          child: FloatingActionButton( //button to start and stop recording; calls doWordEval() when stopped
+        child: Container(
+          height: 100.0,  // Set the height
+          width: 100.0,  // Set the width
+          child: FloatingActionButton(
             onPressed: () async {
               if (_isRecording) {
                 await _stopRecording();
@@ -451,13 +488,16 @@ class WordEvaluationPageState extends State<WordEvaluationPage> {
                 _startRecording();
               }
             },
-            backgroundColor: Colors.blue,
-            child: Icon(_isRecording ? Icons.stop : Icons.mic),
+            backgroundColor: AppConstants.accentColor1,
+            child: Icon(_isRecording ? Icons.stop : Icons.mic, size: 50.0),  // Increase the size of the icon as well
           ),
         ),
+  ),
       ),
     ],
   ),
+  )
 );
   }
 }
+

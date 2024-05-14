@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 // background color for all pages to be used for simple access in the coding of app pages
 class AppConstants {
   static Color backgroundColor1 = const Color.fromARGB(235, 240, 219, 239);
+  static Color accentColor1 = const Color.fromARGB(255,142, 184, 229);
 
   // Multiple choice answers
   static const Color correctAnswerColor = Colors.green;
